@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Like API - Admin Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #0f172e 0%, #1a237e 50%, #0f172e 100%);
+            color: #e0e0e0;
+            background-attachment: fixed;
+        }
+        
+        .navbar { 
+            background: rgba(15, 23, 46, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 2px solid #6366f1;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar h1 { 
+            color: #6366f1; 
+            font-size: 1.8rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 0.8rem;
+            font-weight: 800;
+            text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        }
+        
+        .navbar-links { 
+            display: flex; 
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .navbar-links a { 
+            color: #a0aec0; 
+            text-decoration: none; 
+            transition: 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        
+        .navbar-links a:hover { 
+            color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        
+        .header { 
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.8s ease;
+        }
+        
+        .header h2 { 
+            color: #fff;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #6366f1, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header p { color: #a0aec0; }
+        
+        .stats { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 1.5rem; 
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+        
+        .stat-card { 
+            background: linear-gradient(135deg, #1e3a5f 0%, #1a237e 100%); 
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .stat-card:hover::before {
+            left: 100%;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-10px);
+            border-color: #6366f1;
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2);
+        }
+        
+        .stat-label { 
+            color: #a0aec0; 
+            font-size: 0.9rem; 
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .stat-value { 
+            font-size: 2.5rem; 
+            font-weight: 800; 
+            color: #6366f1;
+            text-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+        }
+        
+        .stat-card:nth-child(2) .stat-value { color: #10b981; }
+        .stat-card:nth-child(3) .stat-value { color: #f59e0b; }
+        .stat-card:nth-child(4) .stat-value { color: #ec4899; }
+        
+        .create-section { 
+            background: linear-gradient(135deg, #1e3a5f 0%, #1a237e 100%); 
+            padding: 2.5rem; 
+            border-radius: 15px; 
+            margin-bottom: 2rem; 
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+        
+        .create-section h3 { 
+            color: #fbbf24; 
+            margin-bottom: 1.5rem; 
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .form-row { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+            gap: 1rem; 
+            margin-bottom: 1.5rem;
+            align-items: flex-end;
+        }
+        
+        .form-group { 
+            display: flex; 
+            flex-direction: column; 
+        }
+        
+        .form-group label { 
+            color: #cbd5e1; 
+            font-size: 0.9rem; 
+            margin-bottom: 0.5rem; 
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group input { 
+            background: rgba(0, 0, 0, 0.3); 
+            border: 1px solid rgba(99, 102, 241, 0.3); 
+            color: #e0e0e0; 
+            padding: 1rem; 
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus { 
+            outline: none; 
+            border-color: #6366f1; 
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+            background: rgba(99, 102, 241, 0.05);
+        }
+        
+        .btn { 
+            padding: 1rem 1.5rem; 
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 700;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-sm { 
+            padding: 0.6rem 1rem; 
+            font-size: 0.85rem;
+        }
+        
+        .btn-danger { 
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+        }
+        
+        .btn-danger:hover { 
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-copy {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+        
+        .btn-copy:hover {
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+        
+        .keys-section { 
+            background: linear-gradient(135deg, #1e3a5f 0%, #1a237e 100%); 
+            padding: 2.5rem; 
+            border-radius: 15px; 
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+        
+        .keys-section h3 { 
+            color: #e0e0e0; 
+            margin-bottom: 1.5rem; 
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 10px;
+        }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        
+        th { 
+            background: rgba(99, 102, 241, 0.1);
+            color: #cbd5e1; 
+            padding: 1.2rem; 
+            text-align: left; 
+            border-bottom: 2px solid #6366f1; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+        
+        td { 
+            padding: 1.2rem; 
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2); 
+            color: #e0e0e0;
+        }
+        
+        tr:hover { 
+            background: rgba(99, 102, 241, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .key-name { 
+            color: #6366f1; 
+            font-family: 'Courier New', monospace; 
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-badge { 
+            display: inline-block; 
+            padding: 0.6rem 1rem; 
+            border-radius: 8px; 
+            font-size: 0.85rem; 
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid;
+        }
+        
+        .status-active { 
+            background: rgba(16, 185, 129, 0.15); 
+            color: #10b981;
+            border-color: #10b981;
+        }
+        
+        .status-expired { 
+            background: rgba(239, 68, 68, 0.15); 
+            color: #ef4444;
+            border-color: #ef4444;
+        }
+        
+        .actions { 
+            display: flex; 
+            gap: 0.8rem;
+        }
+        
+        .no-keys { 
+            text-align: center; 
+            padding: 3rem; 
+            color: #a0aec0;
+            font-size: 1.1rem;
+        }
+        
+        .usage {
+            font-family: 'Courier New', monospace;
+            color: #f59e0b;
+            font-weight: 600;
+        }
+        
+        .developer-info {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+            margin-top: 2rem;
+            animation: fadeInUp 0.8s ease 0.8s both;
+        }
+        
+        .developer-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fbbf24;
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .form-row { grid-template-columns: 1fr; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            table { font-size: 0.9rem; }
+            th, td { padding: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>🔐 API Key Manager</h1>
+        <div class="navbar-links">
+            <a href="/">Home</a>
+            <a href="/admin/change_password">🔑 Change Password</a>
+            <a href="/admin/logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h2>Admin Dashboard - Like API</h2>
+            <p>Manage and monitor all API keys</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">🔑 Total Keys</div>
+                <div class="stat-value">{{ total_keys }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">✅ Active Keys</div>
+                <div class="stat-value">{{ active_keys }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">⚡ Total Requests</div>
+                <div class="stat-value">{{ total_requests }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">🔒 Expired/Disabled</div>
+                <div class="stat-value">{{ expired_keys }}</div>
+            </div>
+        </div>
+
+        <div class="create-section">
+            <h3><span>✨</span> Create New API Key</h3>
+            <form method="post" action="/admin/create_key">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="key_name">Key Name</label>
+                        <input type="text" id="key_name" name="key_name" placeholder="e.g., VIP_User" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="daily_limit">Max Daily Requests</label>
+                        <input type="number" id="daily_limit" name="daily_limit" placeholder="1000" value="1000" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expiration_days">Days Valid</label>
+                        <input type="number" id="expiration_days" name="expiration_days" placeholder="30" value="30" required>
+                    </div>
+                    <div style="display: flex; align-items: flex-end;">
+                        <button type="submit" class="btn">✨ Create Key</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="keys-section">
+            <h3><span>📋</span> All Keys ({{ keys|length }})</h3>
+            {% if keys %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Key Name</th>
+                            <th>Usage Today</th>
+                            <th>Created</th>
+                            <th>Expires</th>
+                            <th>Total Requests</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key in keys %}
+                        <tr>
+                            <td><span class="key-name">{{ key.key }}</span></td>
+                            <td><span class="usage">{{ key.usage_today }}/{{ key.daily_limit }}</span></td>
+                            <td>{{ key.created_at }}</td>
+                            <td>{{ key.expires_at }}</td>
+                            <td>{{ key.total_requests }}</td>
+                            <td>
+                                <span class="status-badge {% if key.is_expired %}status-expired{% else %}status-active{% endif %}">
+                                    {% if key.is_expired %}● Expired{% else %}● Active{% endif %}
+                                </span>
+                            </td>
+                            <td class="actions">
+                                <button class="btn btn-sm btn-copy" onclick="copyKey('{{ key.key }}')">📋 Copy</button>
+                                <form method="post" action="/admin/delete_key" style="display: inline;">
+                                    <input type="hidden" name="key_name" value="{{ key.key }}">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this key?')">🗑️ Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-keys">
+                <p>📭 No API keys yet. Create your first key above!</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="developer-info">
+            <h3>Developed By:</h3>
+            <div class="developer-name">🚀 BHUWAN</div>
+            <p style="margin-top: 0.5rem;">Professional API Service Developer</p>
+        </div>
+    </div>
+
+    <script>
+        function copyKey(key) {
+            navigator.clipboard.writeText(key);
+            alert('✓ Key copied: ' + key);
+        }
+    </script>
+</body>
+</html>
