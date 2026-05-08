@@ -20,10 +20,19 @@ from datetime import datetime, timedelta, timezone
 import secrets
 from flask import session, redirect, url_for, render_template
 import os
-# Use instance folder for SQLite on Render
+
+# ✅ STEP 1: Create Flask app FIRST
+app = Flask(__name__)
+
+# ✅ STEP 2: Configure database (after app is created)
 instance_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance')
 os.makedirs(instance_path, exist_ok=True)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(instance_path, "api_keys.db")}'
+app.config['SECRET_KEY'] = 'supersecretkey'  # Change this to a secure key
+
+# ✅ STEP 3: Initialize database
+db = SQLAlchemy(app)
+
 
 class APIKey(db.Model):
     id = db.Column(db.Integer, primary_key=True)
