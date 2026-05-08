@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create API Key - Admin</title>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #0f172e 0%, #1a237e 50%, #0f172e 100%);
+            color: #e0e0e0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh;
+            padding: 2rem;
+            background-attachment: fixed;
+        }
+        
+        .container { 
+            background: linear-gradient(135deg, #1e3a5f 0%, #1a237e 100%); 
+            padding: 3.5rem; 
+            border-radius: 15px; 
+            width: 100%; 
+            max-width: 550px; 
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.6s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        h1 { 
+            text-align: center; 
+            color: #6366f1;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            text-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .subtitle {
+            color: #a0aec0;
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
+        
+        .form-group { 
+            margin-bottom: 1.8rem; 
+        }
+        
+        label { 
+            display: block; 
+            margin-bottom: 0.7rem; 
+            color: #cbd5e1; 
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+        
+        input { 
+            width: 100%; 
+            padding: 1rem; 
+            background: rgba(0, 0, 0, 0.3); 
+            border: 1px solid rgba(99, 102, 241, 0.3); 
+            color: #e0e0e0; 
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        input::placeholder {
+            color: #64748b;
+        }
+        
+        input:focus { 
+            outline: none; 
+            border-color: #6366f1;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+            background: rgba(99, 102, 241, 0.05);
+        }
+        
+        .btn { 
+            width: 100%; 
+            padding: 1rem; 
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 700;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+        }
+        
+        .btn:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .info-box {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            border-left: 4px solid #6366f1;
+        }
+        
+        .info-box p {
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        
+        .info-box strong {
+            color: #6366f1;
+        }
+        
+        .link-container { 
+            text-align: center; 
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        
+        .link-container a { 
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .link-container a:hover { 
+            color: #8b5cf6;
+            transform: translateX(-3px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔑 Create New API Key</h1>
+            <p class="subtitle">Generate a new API key with custom settings</p>
+        </div>
+        
+        <form method="post">
+            <div class="form-group">
+                <label for="key_name">Key Name (Unique Identifier)</label>
+                <input 
+                    type="text" 
+                    id="key_name" 
+                    name="key_name" 
+                    placeholder="e.g., VIP_User_Premium"
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="daily_limit">Daily Request Limit</label>
+                <input 
+                    type="number" 
+                    id="daily_limit" 
+                    name="daily_limit" 
+                    placeholder="1000"
+                    value="1000" 
+                    min="1" 
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="expiration_days">Expiration Days</label>
+                <input 
+                    type="number" 
+                    id="expiration_days" 
+                    name="expiration_days" 
+                    placeholder="30"
+                    value="30" 
+                    min="1" 
+                    required
+                >
+            </div>
+            
+            <button type="submit" class="btn">✨ Create API Key</button>
+        </form>
+        
+        <div class="info-box">
+            <p>
+                <strong>Note:</strong> The key name will be used as the API key. 
+                Keep it secure and share only with authorized users.
+            </p>
+        </div>
+        
+        <div class="link-container">
+            <a href="/admin/dashboard">← Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
