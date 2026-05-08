@@ -19,12 +19,11 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta, timezone
 import secrets
 from flask import session, redirect, url_for, render_template
-
-app = Flask(__name__)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///api_keys.db'
-app.config['SECRET_KEY'] = 'supersecretkey'  # Change this to a secure key
-db = SQLAlchemy(app)
+import os
+# Use instance folder for SQLite on Render
+instance_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance')
+os.makedirs(instance_path, exist_ok=True)
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(instance_path, "api_keys.db")}'
 
 class APIKey(db.Model):
     id = db.Column(db.Integer, primary_key=True)
