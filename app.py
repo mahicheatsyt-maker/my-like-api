@@ -2,6 +2,7 @@
 """Before sharing the src with other please give credit to Wotax who made this"""
 
 
+# Imports first
 from flask import Flask, request, jsonify
 import asyncio
 from Crypto.Cipher import AES
@@ -21,10 +22,23 @@ import secrets
 from flask import session, redirect, url_for, render_template
 import os
 
+# STEP 1: Create Flask app
+app = Flask(__name__)
+
+# STEP 2: Configure database
 database_url = os.environ.get('DATABASE_URL', 'sqlite:///api_keys.db')
+# Fix postgres:// to postgresql:// for SQLAlchemy
+if database_url and database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'supersecretkey'
 
+# STEP 3: Initialize database
+db = SQLAlchemy(app)
 
+# STEP 4: Define models
 class APIKey(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(64), unique=True, nullable=False)
@@ -40,8 +54,12 @@ class Admin(db.Model):
     username = db.Column(db.String(80), unique=True, default='bhuwan')
     password = db.Column(db.String(120), default='bhuwan')
 
+# STEP 5: Create tables
 with app.app_context():
     db.create_all()
+
+# STEP 6: Then all your functions and routes...
+# (normalize_datetime, load_tokens, encrypt_message, etc.)
 
 def normalize_datetime(dt):
     if dt is None:
