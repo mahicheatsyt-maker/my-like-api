@@ -56,6 +56,28 @@ def normalize_datetime(dt):
     return dt if dt.tzinfo is not None else dt.replace(tzinfo=timezone.utc)
 
 def load_tokens(server_name):
+    # First try local files
+    local_files = {
+        "IND": "token_ind.json",
+        "BR": "token_br.json",
+        "NA": "token_br.json",
+        "US": "token_br.json",
+        "SAC": "token_br.json",
+    }
+    
+    local_file = local_files.get(server_name, "token_ag.json")
+    
+    # Check if local file exists
+    if os.path.exists(local_file):
+        try:
+            with open(local_file, 'r') as f:
+                tokens = json.load(f)
+                print(f"Loaded {len(tokens)} tokens from local file: {local_file}")
+                return tokens
+        except Exception as e:
+            print(f"Error loading local token file: {e}")
+    
+    # Fallback to GitHub
     REPO = "mahadevihik0-cyber/tokens"
     BASE_URL = f"https://raw.githubusercontent.com/{REPO}/main/"
     
@@ -67,22 +89,19 @@ def load_tokens(server_name):
         else:
             url = BASE_URL + "token_ag.json"
             
-        print(f"Attempting to load tokens from: {url}")  # Debug print
-            
-        response = requests.get(url, timeout=10)  # Increased timeout
-        print(f"Response status: {response.status_code}")  # Debug print
+        print(f"Attempting to load tokens from: {url}")
+        response = requests.get(url, timeout=10)
+        print(f"Response status: {response.status_code}")
         
         if response.status_code == 200:
             tokens = response.json()
-            print(f"Successfully loaded {len(tokens)} tokens")  # Debug print
+            print(f"Successfully loaded {len(tokens)} tokens from GitHub")
             return tokens
         else:
-            app.logger.error(f"Failed to fetch tokens from {url}: {response.status_code}")
-            print(f"Response content: {response.text[:200]}")  # Print first 200 chars of response
+            print(f"Failed to fetch tokens. Status: {response.status_code}")
             return None
     except Exception as e:
-        app.logger.error(f"Error loading tokens for server {server_name}: {e}")
-        print(f"Exception details: {e}")
+        print(f"Error loading tokens: {e}")
         return None
 
 def encrypt_message(plaintext):
