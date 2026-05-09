@@ -1,0 +1,16 @@
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+instance/
+
+# Python
+__pycache__/
+*.pyc
+.env
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
