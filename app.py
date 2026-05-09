@@ -21,17 +21,8 @@ import secrets
 from flask import session, redirect, url_for, render_template
 import os
 
-# ✅ STEP 1: Create Flask app FIRST
-app = Flask(__name__)
-
-# ✅ STEP 2: Configure database (after app is created)
-instance_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance')
-os.makedirs(instance_path, exist_ok=True)
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(instance_path, "api_keys.db")}'
-app.config['SECRET_KEY'] = 'supersecretkey'  # Change this to a secure key
-
-# ✅ STEP 3: Initialize database
-db = SQLAlchemy(app)
+database_url = os.environ.get('DATABASE_URL', 'sqlite:///api_keys.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 
 
 class APIKey(db.Model):
