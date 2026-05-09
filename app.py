@@ -67,14 +67,22 @@ def load_tokens(server_name):
         else:
             url = BASE_URL + "token_ag.json"
             
-        response = requests.get(url, timeout=5)
+        print(f"Attempting to load tokens from: {url}")  # Debug print
+            
+        response = requests.get(url, timeout=10)  # Increased timeout
+        print(f"Response status: {response.status_code}")  # Debug print
+        
         if response.status_code == 200:
-            return response.json()
+            tokens = response.json()
+            print(f"Successfully loaded {len(tokens)} tokens")  # Debug print
+            return tokens
         else:
             app.logger.error(f"Failed to fetch tokens from {url}: {response.status_code}")
+            print(f"Response content: {response.text[:200]}")  # Print first 200 chars of response
             return None
     except Exception as e:
         app.logger.error(f"Error loading tokens for server {server_name}: {e}")
+        print(f"Exception details: {e}")
         return None
 
 def encrypt_message(plaintext):
