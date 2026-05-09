@@ -1,12 +1,13 @@
 services:
   - type: web
-    name: like-api
+    name: my-like-api
     runtime: python
-    repo: https://github.com/YOUR_USERNAME/YOUR_REPO_NAME
-    plan: free
-    region: oregon
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
       - key: PYTHON_VERSION
-        value: 3.10.0
+        value: 3.11.12
+      - key: DATABASE_URL
+        fromDatabase:
+          name: like-api-db
+          property: connectionString
